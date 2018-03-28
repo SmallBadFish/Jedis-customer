@@ -1,2 +1,3 @@
 # Jedis-customer
 Jedis源码研究
+180328 Connection对象建立与Redis服务器的Socket连接
