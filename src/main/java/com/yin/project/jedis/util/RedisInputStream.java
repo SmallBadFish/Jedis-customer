@@ -9,7 +9,7 @@
 
 package com.yin.project.jedis.util;
 
-import redis.clients.jedis.exceptions.JedisConnectionException;
+import com.yin.project.jedis.exceptions.JedisConnectionException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
