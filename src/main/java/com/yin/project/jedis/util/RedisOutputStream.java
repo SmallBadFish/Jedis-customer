@@ -4,30 +4,34 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * The class implements a buffered output stream without synchronization There are also special
- * operations like in-place string encoding. This stream fully ignore mark/reset and should not be
- * used outside Jedis
- */
+
 public final class RedisOutputStream extends FilterOutputStream {
     private final static int[] sizeTable = {9, 99, 999, 9999, 99999, 999999, 9999999, 99999999,
             999999999, Integer.MAX_VALUE};
+
+    //100以内的数字除以10的结果（取整）
     private final static byte[] DigitTens = {'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1',
             '1', '1', '1', '1', '1', '1', '1', '1', '1', '2', '2', '2', '2', '2', '2', '2', '2', '2',
             '2', '3', '3', '3', '3', '3', '3', '3', '3', '3', '3', '4', '4', '4', '4', '4', '4', '4',
             '4', '4', '4', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '6', '6', '6', '6', '6',
             '6', '6', '6', '6', '6', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '8', '8', '8',
             '8', '8', '8', '8', '8', '8', '8', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9',};
+
+    //100以内的数字对10取模的结果
     private final static byte[] DigitOnes = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
             '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4',
             '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2',
             '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',};
+    // 数值表示成字符串，所要用到的所有字符，这边就能看到最多能表示成36进制
     private final static byte[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
             'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
             't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+    //缓存字节数组
     private final byte[] buf;
+    //缓存字节数组的计数器
     private int count;
 
     public RedisOutputStream(final OutputStream out) {
@@ -92,7 +96,6 @@ public final class RedisOutputStream extends FilterOutputStream {
             if (len >= buf.length - count) {
                 flushBuffer();
             }
-
             System.arraycopy(b, off, buf, count, len);
             count += len;
         }
@@ -173,7 +176,6 @@ public final class RedisOutputStream extends FilterOutputStream {
             write((byte) '-');
             value = -value;
         }
-
         int size = 0;
         while (value > sizeTable[size])
             size++;
